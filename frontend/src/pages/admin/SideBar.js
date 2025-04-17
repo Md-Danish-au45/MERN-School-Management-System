@@ -1,85 +1,148 @@
-import * as React from 'react';
-import { Divider, ListItemButton, ListItemIcon, ListItemText, ListSubheader } from '@mui/material';
-import { Link, useLocation } from 'react-router-dom';
+import React from "react";
+import {
+  Box,
+  Divider,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  ListSubheader,
+  useTheme,
+} from "@mui/material";
+import { Link, useLocation } from "react-router-dom";
 
 import HomeIcon from "@mui/icons-material/Home";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import AnnouncementOutlinedIcon from '@mui/icons-material/AnnouncementOutlined';
-import ClassOutlinedIcon from '@mui/icons-material/ClassOutlined';
-import SupervisorAccountOutlinedIcon from '@mui/icons-material/SupervisorAccountOutlined';
-import ReportIcon from '@mui/icons-material/Report';
-import AssignmentIcon from '@mui/icons-material/Assignment';
+import AnnouncementOutlinedIcon from "@mui/icons-material/AnnouncementOutlined";
+import ClassOutlinedIcon from "@mui/icons-material/ClassOutlined";
+import SupervisorAccountOutlinedIcon from "@mui/icons-material/SupervisorAccountOutlined";
+import ReportIcon from "@mui/icons-material/Report";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+
+const menuItems = [
+  { text: "Home", icon: <HomeIcon />, path: "/" },
+  { text: "Classes", icon: <ClassOutlinedIcon />, path: "/Admin/classes" },
+  { text: "Subjects", icon: <AssignmentIcon />, path: "/Admin/subjects" },
+  {
+    text: "Teachers",
+    icon: <SupervisorAccountOutlinedIcon />,
+    path: "/Admin/teachers",
+  },
+  { text: "Students", icon: <PersonOutlineIcon />, path: "/Admin/students" },
+  {
+    text: "Notices",
+    icon: <AnnouncementOutlinedIcon />,
+    path: "/Admin/notices",
+  },
+  { text: "Complains", icon: <ReportIcon />, path: "/Admin/complains" },
+];
+
+const userItems = [
+  {
+    text: "Profile",
+    icon: <AccountCircleOutlinedIcon />,
+    path: "/Admin/profile",
+  },
+  { text: "Logout", icon: <ExitToAppIcon />, path: "/logout" },
+];
 
 const SideBar = () => {
-    const location = useLocation();
-    return (
-        <>
-            <React.Fragment>
-                <ListItemButton component={Link} to="/">
-                    <ListItemIcon>
-                        <HomeIcon color={location.pathname === ("/" || "/Admin/dashboard") ? 'primary' : 'inherit'} />
-                    </ListItemIcon>
-                    <ListItemText primary="Home" />
-                </ListItemButton>
-                <ListItemButton component={Link} to="/Admin/classes">
-                    <ListItemIcon>
-                        <ClassOutlinedIcon color={location.pathname.startsWith('/Admin/classes') ? 'primary' : 'inherit'} />
-                    </ListItemIcon>
-                    <ListItemText primary="Classes" />
-                </ListItemButton>
-                <ListItemButton component={Link} to="/Admin/subjects">
-                    <ListItemIcon>
-                        <AssignmentIcon color={location.pathname.startsWith("/Admin/subjects") ? 'primary' : 'inherit'} />
-                    </ListItemIcon>
-                    <ListItemText primary="Subjects" />
-                </ListItemButton>
-                <ListItemButton component={Link} to="/Admin/teachers">
-                    <ListItemIcon>
-                        <SupervisorAccountOutlinedIcon color={location.pathname.startsWith("/Admin/teachers") ? 'primary' : 'inherit'} />
-                    </ListItemIcon>
-                    <ListItemText primary="Teachers" />
-                </ListItemButton>
-                <ListItemButton component={Link} to="/Admin/students">
-                    <ListItemIcon>
-                        <PersonOutlineIcon color={location.pathname.startsWith("/Admin/students") ? 'primary' : 'inherit'} />
-                    </ListItemIcon>
-                    <ListItemText primary="Students" />
-                </ListItemButton>
-                <ListItemButton component={Link} to="/Admin/notices">
-                    <ListItemIcon>
-                        <AnnouncementOutlinedIcon color={location.pathname.startsWith("/Admin/notices") ? 'primary' : 'inherit'} />
-                    </ListItemIcon>
-                    <ListItemText primary="Notices" />
-                </ListItemButton>
-                <ListItemButton component={Link} to="/Admin/complains">
-                    <ListItemIcon>
-                        <ReportIcon color={location.pathname.startsWith("/Admin/complains") ? 'primary' : 'inherit'} />
-                    </ListItemIcon>
-                    <ListItemText primary="Complains" />
-                </ListItemButton>
-            </React.Fragment>
-            <Divider sx={{ my: 1 }} />
-            <React.Fragment>
-                <ListSubheader component="div" inset>
-                    User
-                </ListSubheader>
-                <ListItemButton component={Link} to="/Admin/profile">
-                    <ListItemIcon>
-                        <AccountCircleOutlinedIcon color={location.pathname.startsWith("/Admin/profile") ? 'primary' : 'inherit'} />
-                    </ListItemIcon>
-                    <ListItemText primary="Profile" />
-                </ListItemButton>
-                <ListItemButton component={Link} to="/logout">
-                    <ListItemIcon>
-                        <ExitToAppIcon color={location.pathname.startsWith("/logout") ? 'primary' : 'inherit'} />
-                    </ListItemIcon>
-                    <ListItemText primary="Logout" />
-                </ListItemButton>
-            </React.Fragment>
-        </>
-    )
-}
+  const theme = useTheme();
+  const location = useLocation();
 
-export default SideBar
+  const isActive = (path) =>
+    location.pathname === path || location.pathname.startsWith(path);
+
+  const renderItem = ({ text, icon, path }) => {
+    const active = isActive(path);
+    return (
+      <ListItemButton
+        key={text}
+        component={Link}
+        to={path}
+        sx={{
+          borderLeft: active
+            ? `4px solid ${theme.palette.primary.main}`
+            : "4px solid transparent",
+          backgroundColor: active
+            ? theme.palette.action.selected
+            : "transparent",
+          "&:hover": {
+            backgroundColor: theme.palette.action.hover,
+          },
+          pl: 3,
+        }}
+      >
+        <ListItemIcon
+          sx={{
+            color: active
+              ? theme.palette.primary.main
+              : theme.palette.text.secondary,
+            minWidth: 40,
+          }}
+        >
+          {React.cloneElement(icon, { fontSize: "small" })}
+        </ListItemIcon>
+        <ListItemText
+          primary={text}
+          primaryTypographyProps={{
+            fontWeight: active ? "bold" : "normal",
+            fontSize: "0.95rem",
+          }}
+        />
+      </ListItemButton>
+    );
+  };
+
+  return (
+    <Box sx={{ width: "100%", pt: 2 }}>
+      <List
+        subheader={
+          <ListSubheader
+            component="div"
+            sx={{
+              color: theme.palette.text.secondary,
+              fontWeight: "bold",
+              fontSize: "0.85rem",
+              textTransform: "uppercase",
+              pl: 3,
+              pb: 1,
+              backgroundColor: "transparent",
+            }}
+          >
+            Main
+          </ListSubheader>
+        }
+      >
+        {menuItems.map(renderItem)}
+      </List>
+
+      <Divider sx={{ my: 2 }} />
+
+      <List
+        subheader={
+          <ListSubheader
+            component="div"
+            sx={{
+              color: theme.palette.text.secondary,
+              fontWeight: "bold",
+              fontSize: "0.85rem",
+              textTransform: "uppercase",
+              pl: 3,
+              pb: 1,
+              backgroundColor: "transparent",
+            }}
+          >
+            User
+          </ListSubheader>
+        }
+      >
+        {userItems.map(renderItem)}
+      </List>
+    </Box>
+  );
+};
+
+export default SideBar;
